@@ -102,17 +102,25 @@ if (!iconWallContext) {
     "SOFTWARE",
   ];
   const isSmallScreen = window.matchMedia("(max-width: 600px)");
+  let pendingIcons = iconNames.length;
   const icons = iconNames.map((name) => {
     const image = new Image();
-    image.addEventListener("load", drawIconWall);
+    image.addEventListener("load", handleIconLoad, { once: true });
     image.addEventListener("error", () => {
       console.error(`Unable to load background icon: assets/heroIcons/${name}.png`);
+      handleIconLoad();
     }, { once: true });
     image.src = `assets/heroIcons/${name}.png`;
     return image;
   });
   let wallWidth = 0;
   let wallHeight = 0;
+  let resizeFrame = 0;
+
+  function handleIconLoad() {
+    pendingIcons -= 1;
+    if (!pendingIcons) drawIconWall();
+  }
 
   function drawIconWall() {
     if (!wallWidth || !wallHeight) return;
@@ -172,7 +180,15 @@ if (!iconWallContext) {
     drawIconWall();
   }
 
-  window.addEventListener("resize", resizeIconWall, { passive: true });
+  function scheduleIconWallResize() {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      resizeIconWall();
+    });
+  }
+
+  window.addEventListener("resize", scheduleIconWallResize, { passive: true });
   resizeIconWall();
 }
 
@@ -187,8 +203,8 @@ if (!context) {
   let width = 0;
   let height = 0;
   let particles = [];
-  let animationFrame = 0;
-  let lastFrameTime = 0;
+  let animationTimer = 0;
+  let resizeFrame = 0;
 
   class Particle {
     reset() {
@@ -244,27 +260,33 @@ if (!context) {
     });
   }
 
-  function animate(timestamp) {
-    if (timestamp - lastFrameTime >= frameInterval) {
-      lastFrameTime = timestamp;
-      drawFrame();
-    }
-    animationFrame = requestAnimationFrame(animate);
+  function animate() {
+    animationTimer = 0;
+    if (document.hidden || motionPreference.matches) return;
+    drawFrame();
+    animationTimer = window.setTimeout(animate, frameInterval);
   }
 
   function updateAnimationState() {
     if (document.hidden || motionPreference.matches) {
-      cancelAnimationFrame(animationFrame);
-      animationFrame = 0;
+      window.clearTimeout(animationTimer);
+      animationTimer = 0;
       return;
     }
-    if (!animationFrame) {
-      lastFrameTime = 0;
-      animationFrame = requestAnimationFrame(animate);
+    if (!animationTimer) {
+      animationTimer = window.setTimeout(animate, frameInterval);
     }
   }
 
-  window.addEventListener("resize", resizeCanvas, { passive: true });
+  function scheduleCanvasResize() {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      resizeCanvas();
+    });
+  }
+
+  window.addEventListener("resize", scheduleCanvasResize, { passive: true });
   document.addEventListener("visibilitychange", updateAnimationState);
   motionPreference.addEventListener("change", updateAnimationState);
   resizeCanvas();
