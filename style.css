@@ -6,27 +6,27 @@
 
 html,
 body {
-  height: 100vh;
+  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
   background: radial-gradient(
     ellipse at center,
     #0b1220 0%,
     #070d18 100%
   );
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   perspective: 800px;
   font-family: "Orbitron", sans-serif;
   color: #2563eb;
 }
 
 .background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   background-blend-mode: screen;
-  will-change: transform;
+  pointer-events: none;
 }
 
 .front,
@@ -36,7 +36,6 @@ body {
   top: 0;
   left: 0;
   height: 100%;
-  will-change: transform;
 }
 
 .front {
@@ -70,8 +69,11 @@ main {
   position: relative;
   z-index: 10;
   text-align: center;
-  top: 45%;
-  transform: translateY(-50%);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.25rem 4rem;
 }
 
 .logoContainer {
@@ -83,17 +85,25 @@ main {
 }
 
 .logo {
-  width: 60vmin;
-  opacity: 0.25;
-  filter:
-    drop-shadow(15px 15px 15px #2563eb)
-    drop-shadow(-15px -15px 15px #f8fafc);
-  transform: translateZ(50px);
+  width: min(60vmin, 24rem);
+  opacity: 0.18;
   transform-style: preserve-3d;
 }
 
+.content {
+  position: relative;
+  max-width: 48rem;
+}
+
+.eyebrow {
+  margin-bottom: 1rem;
+  color: #60a5fa;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+}
+
 h1 {
-  font-size: 3rem;
+  font-size: clamp(1.8rem, 6vw, 3rem);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #bbbbbb;
@@ -104,8 +114,8 @@ h1 {
 }
 
 h2 {
-  transform: translateZ(100px);
-  font-size: 2rem;
+  margin-top: 1rem;
+  font-size: clamp(1.35rem, 4vw, 2rem);
   letter-spacing: 1px;
   text-transform: capitalize;
   color: #94a3b8;
@@ -115,6 +125,41 @@ h2 {
   animation:
     ambient 3s linear infinite,
     irregularBlink 5s linear infinite;
+}
+
+.description {
+  max-width: 34rem;
+  margin: 1rem auto 0;
+  color: #cbd5e1;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.75rem;
+  padding: 0.85rem 1.2rem;
+  border: 1px solid rgba(96, 165, 250, 0.55);
+  border-radius: 999px;
+  color: #dbeafe;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  border-color: #93c5fd;
+  background-color: rgba(37, 99, 235, 0.2);
+}
+
+.cta:focus-visible,
+footer a:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 4px;
 }
 
 @keyframes glow {
@@ -234,12 +279,11 @@ canvas {
   height: 100%;
   z-index: 1;
   opacity: 0.35;
-  filter: blur(3px);
 }
 
 footer {
   position: absolute;
-  bottom: 10px;
+  bottom: max(10px, env(safe-area-inset-bottom));
   width: 100%;
   text-align: center;
   z-index: 10;
@@ -259,4 +303,42 @@ footer a {
 footer a:hover {
   color: #3b82f6;
   text-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+}
+
+@media (max-width: 600px) {
+  .front,
+  .mid,
+  .back {
+    display: none;
+  }
+
+  .logo {
+    width: min(72vmin, 18rem);
+    opacity: 0.13;
+  }
+
+  .eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+  }
+
+  .description {
+    font-size: 0.95rem;
+  }
+
+  h1,
+  h2 {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
