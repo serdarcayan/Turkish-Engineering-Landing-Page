@@ -84,6 +84,98 @@ if (!motionPreference.matches) {
   }
 }
 
+const iconWallCanvas = document.getElementById("iconWall");
+const iconWallContext = iconWallCanvas.getContext("2d", { alpha: true });
+
+if (!iconWallContext) {
+  console.error("Canvas 2D context is not available; the icon wall is disabled.");
+} else {
+  const iconNames = [
+    "BIO_ENGINEERING",
+    "CHEMISTRY",
+    "CODE",
+    "ELECTRIC",
+    "ELECTRONIC",
+    "ENDUSTRY",
+    "MATH",
+    "MECHANIC",
+    "SOFTWARE",
+  ];
+  const isSmallScreen = window.matchMedia("(max-width: 600px)");
+  const icons = iconNames.map((name) => {
+    const image = new Image();
+    image.addEventListener("load", drawIconWall);
+    image.addEventListener("error", () => {
+      console.error(`Unable to load background icon: assets/heroIcons/${name}.png`);
+    }, { once: true });
+    image.src = `assets/heroIcons/${name}.png`;
+    return image;
+  });
+  let wallWidth = 0;
+  let wallHeight = 0;
+
+  function drawIconWall() {
+    if (!wallWidth || !wallHeight) return;
+
+    iconWallContext.clearRect(0, 0, wallWidth, wallHeight);
+    const spacingX = isSmallScreen.matches ? 205 : 260;
+    const spacingY = isSmallScreen.matches ? 205 : 230;
+    const columns = Math.ceil(wallWidth / spacingX) + 1;
+    const rows = Math.ceil(wallHeight / spacingY) + 1;
+    const cellWidth = wallWidth / columns;
+    const cellHeight = wallHeight / rows;
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        const seed = (row * 73 + column * 137 + row * column * 17) % 997;
+        if (seed % 5 === 0) continue;
+
+        const icon = icons[seed % icons.length];
+        if (!icon.complete || !icon.naturalWidth) continue;
+
+        const centerX = (column + 0.5) * cellWidth + (row % 2 ? cellWidth * 0.12 : 0);
+        const centerY = (row + 0.5) * cellHeight;
+        const jitter = isSmallScreen.matches ? 10 : 24;
+        const x = centerX + ((seed % 7) - 3) * jitter / 3;
+        const y = centerY + (((seed * 3) % 7) - 3) * jitter / 3;
+        const maxSize = isSmallScreen.matches ? 30 : 44;
+        const size = Math.min(maxSize, Math.min(cellWidth, cellHeight) * 0.2) *
+          (0.82 + (seed % 5) * 0.08);
+
+        const glow = iconWallContext.createRadialGradient(x, y, 0, x, y, size * 1.8);
+        glow.addColorStop(0, "rgba(96, 165, 250, 0.12)");
+        glow.addColorStop(1, "rgba(96, 165, 250, 0)");
+        iconWallContext.fillStyle = glow;
+        iconWallContext.beginPath();
+        iconWallContext.arc(x, y, size * 1.8, 0, Math.PI * 2);
+        iconWallContext.fill();
+
+        iconWallContext.save();
+        iconWallContext.translate(x, y);
+        iconWallContext.rotate(((seed % 9) - 4) * 0.025);
+        iconWallContext.globalAlpha = isSmallScreen.matches ? 0.68 : 0.58;
+        iconWallContext.shadowColor = "rgba(96, 165, 250, 0.28)";
+        iconWallContext.shadowBlur = isSmallScreen.matches ? 7 : 12;
+        iconWallContext.drawImage(icon, -size / 2, -size / 2, size, size);
+        iconWallContext.restore();
+      }
+    }
+  }
+
+  function resizeIconWall() {
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    wallWidth = window.innerWidth;
+    wallHeight = window.innerHeight;
+    iconWallCanvas.width = Math.round(wallWidth * pixelRatio);
+    iconWallCanvas.height = Math.round(wallHeight * pixelRatio);
+    iconWallContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    drawIconWall();
+  }
+
+  window.addEventListener("resize", resizeIconWall, { passive: true });
+  resizeIconWall();
+}
+
 const canvas = document.getElementById("fog");
 const context = canvas.getContext("2d", { alpha: true });
 
@@ -91,7 +183,7 @@ if (!context) {
   console.error("Canvas 2D context is not available; the animated background is disabled.");
 } else {
   const isSmallScreen = window.matchMedia("(max-width: 600px)");
-  const frameInterval = 1000 / 30;
+  const frameInterval = 1000 / 10;
   let width = 0;
   let height = 0;
   let particles = [];

@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="tr">
   <head>
@@ -5,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Turkish Engineering; mühendislik projeleri ve teknoloji çözümleriyle çok yakında burada."
+      content="Turkish Engineering; mühendislik fikirlerini projelere dönüştüren çalışmalar, teknik içerikler ve teknoloji çözümleri çok yakında."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Turkish Engineering | Yakında" />
+    <meta
+      property="og:description"
+      content="Mühendislik fikirleri, projeler ve teknoloji odaklı çözümler. Çok yakında."
     />
     <meta name="theme-color" content="#070d18" />
     <link rel="icon" href="assets/ICON_SMALL_WHITE.svg" type="image/svg+xml" />
@@ -15,11 +22,12 @@
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <title>Turkish Engineering</title>
+    <title>Turkish Engineering | Mühendislik ve Teknoloji</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="background">
+      <canvas id="iconWall" aria-hidden="true"></canvas>
       <canvas id="fog" aria-hidden="true"></canvas>
       <div class="front" aria-hidden="true"></div>
       <div class="mid" aria-hidden="true"></div>
@@ -35,11 +43,61 @@
         />
       </div>
       <div class="content">
-        <p class="eyebrow">YENİLİKÇİ MÜHENDİSLİK ÇÖZÜMLERİ</p>
+        <p class="eyebrow">Bloglar, Forumlar, Projeler, Dersler...</p>
         <h1>Turkish Engineering</h1>
-        <h2>Çok yakında burada.</h2>
+        <h2>Mühendislik hakkında her şey!</h2>
         <p class="description">
-          Mühendislik projeleri ve teknoloji çözümlerimizi keşfetmeye az kaldı.
+          Türk mühendislerini, proje gruplarını ve teknoloji meraklılarını
+          bir araya getiren kapsamlı bir platform. Mühendislik bilgi ve
+          deneyimlerinizi blog yazılarıyla paylaşabilir, forumlarda toplulukla
+          fikir alışverişinde bulunabilir, proje arşivinde ilgi alanınıza
+          uygun çalışmaları keşfedebilir ve kendi projelerinizi yayınlayabilirsiniz.
+          Eğitim içerikleri ve teknik derslerle kendinizi geliştirebilir,
+          teknoloji odaklı çözümlerle yeni fikirler üretebilir ve
+          birlikte daha büyük projelere imza atabilirsiniz.
+        </p>
+
+        <section class="focus" aria-labelledby="focus-title">
+          <h3 id="focus-title">Bu sayfada sizi neler bekliyor?</h3>
+          <ul class="focus-list">
+            <li>
+              <span class="focus-number" aria-hidden="true">01</span>
+              <span class="focus-label">Bloglar</span>
+              <span class="focus-detail">
+                Teknik deneyimlerini, araştırmalarını ve projelerini
+                yazıya dök; bilgi ve tecrübelerini toplulukla paylaş.
+              </span>
+            </li>
+            <li>
+              <span class="focus-number" aria-hidden="true">02</span>
+              <span class="focus-label">Forum</span>
+              <span class="focus-detail">
+                Sorularını paylaş, teknik konuları tartış ve farklı
+                bakış açılarıyla sorunlara birlikte çözüm üret.
+              </span>
+            </li>
+            <li>
+              <span class="focus-number" aria-hidden="true">03</span>
+              <span class="focus-label">Odalar</span>
+              <span class="focus-detail">
+                Ekibinle projeler geliştirirken veya belirli konularda
+                toplulukla buluşurken sesli ve yazılı iletişim kur.
+              </span>
+            </li>
+            <li>
+              <span class="focus-number" aria-hidden="true">04</span>
+              <span class="focus-label">Dersler</span>
+              <span class="focus-detail">
+                Yeni konular öğren, derslerine hazırlan, teknik bilgilerini
+                tazele ve mühendislik becerilerini geliştir.
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <p class="launch-note">
+          Mühendisliğin geleceğinde yerini almak için bizi takipte kal.
+          Çok yakında burada buluşuyoruz!
         </p>
       </div>
     </main>
@@ -51,7 +109,8 @@
           href="https://serdarcayan.github.io/SerdarCayanPorfolio/"
           target="_blank"
           rel="noopener noreferrer"
-        >Serdar ÇAYAN</a>
+          >Serdar ÇAYAN</a
+        >
       </p>
     </footer>
 
