@@ -306,12 +306,6 @@ footer a:hover {
 }
 
 @media (max-width: 600px) {
-  .front,
-  .mid,
-  .back {
-    display: none;
-  }
-
   .logo {
     width: min(72vmin, 18rem);
     opacity: 0.13;
