@@ -2,11 +2,18 @@ const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 if (!motionPreference.matches) {
   const layers = document.querySelectorAll(".front, .mid, .back, .content, .logo");
+  const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  const supportsOrientation = "DeviceOrientationEvent" in window;
+  const motionToggle = document.querySelector(".motion-toggle");
+  const motionStatus = document.querySelector(".motion-status");
   let targetX = 0;
   let targetY = 0;
   let currentX = 0;
   let currentY = 0;
   let frameId = 0;
+  let initialGamma;
+  let initialBeta;
+  let orientationEnabled = false;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -17,7 +24,7 @@ if (!motionPreference.matches) {
     currentY += (targetY - currentY) * 0.12;
 
     layers.forEach((layer, index) => {
-      const depth = (index + 1) * 4;
+      const depth = (index + 1) * 10;
       layer.style.transform = `translate3d(${currentX * depth}px, ${currentY * depth}px, 0)`;
     });
 
@@ -34,7 +41,48 @@ if (!motionPreference.matches) {
     if (!frameId) frameId = requestAnimationFrame(updateParallax);
   }
 
-  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  function handleOrientation(event) {
+    if (event.gamma === null || event.beta === null) return;
+    if (initialGamma === undefined || initialBeta === undefined) {
+      initialGamma = event.gamma;
+      initialBeta = event.beta;
+      return;
+    }
+
+    setTarget(
+      (event.gamma - initialGamma) / 12,
+      (event.beta - initialBeta) / 12
+    );
+  }
+
+  function startOrientation() {
+    if (orientationEnabled) return;
+    window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+    orientationEnabled = true;
+    if (motionToggle) motionToggle.hidden = true;
+    if (motionStatus) motionStatus.textContent = "Telefon hareketi etkin. Telefonu eğerek deneyin.";
+  }
+
+  if (hasCoarsePointer && supportsOrientation) {
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      motionToggle.hidden = false;
+      motionToggle.addEventListener("click", () => {
+        DeviceOrientationEvent.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            startOrientation();
+          } else {
+            motionStatus.textContent = "Hareket izni verilmedi.";
+          }
+        }).catch((error) => {
+          motionStatus.textContent = "Hareket sensörü açılamadı. Sayfanın HTTPS üzerinden açıldığını kontrol edin.";
+          console.warn("Device orientation permission was not granted:", error);
+        });
+      });
+    } else {
+      startOrientation();
+    }
+  } else if (!hasCoarsePointer &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     document.addEventListener("pointermove", (event) => {
       setTarget(
         (event.clientX / window.innerWidth - 0.5) * 2,
@@ -42,42 +90,6 @@ if (!motionPreference.matches) {
       );
     }, { passive: true });
     document.addEventListener("pointerleave", () => setTarget(0, 0), { passive: true });
-  } else if ("DeviceOrientationEvent" in window) {
-    let initialGamma;
-    let initialBeta;
-
-    function handleOrientation(event) {
-      if (event.gamma === null || event.beta === null) return;
-      if (initialGamma === undefined || initialBeta === undefined) {
-        initialGamma = event.gamma;
-        initialBeta = event.beta;
-        return;
-      }
-
-      setTarget((event.gamma - initialGamma) / 20, (event.beta - initialBeta) / 20);
-    }
-
-    function enableOrientation() {
-      const requestPermission = DeviceOrientationEvent.requestPermission;
-      if (typeof requestPermission !== "function") {
-        window.addEventListener("deviceorientation", handleOrientation, { passive: true });
-        return;
-      }
-
-      requestPermission.call(DeviceOrientationEvent).then((permission) => {
-        if (permission === "granted") {
-          window.addEventListener("deviceorientation", handleOrientation, { passive: true });
-        }
-      }).catch((error) => {
-        console.warn("Device orientation permission was not granted:", error);
-      });
-    }
-
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      window.addEventListener("pointerdown", enableOrientation, { once: true, passive: true });
-    } else {
-      enableOrientation();
-    }
   }
 }
 
