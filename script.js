@@ -4,8 +4,6 @@ if (!motionPreference.matches) {
   const layers = document.querySelectorAll(".front, .mid, .back, .content, .logo");
   const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
   const supportsOrientation = "DeviceOrientationEvent" in window;
-  const motionToggle = document.querySelector(".motion-toggle");
-  const motionStatus = document.querySelector(".motion-status");
   let targetX = 0;
   let targetY = 0;
   let currentX = 0;
@@ -13,7 +11,8 @@ if (!motionPreference.matches) {
   let frameId = 0;
   let initialGamma;
   let initialBeta;
-  let orientationEnabled = false;
+  let gyroActive = false;
+  let permissionRequested = false;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -46,50 +45,42 @@ if (!motionPreference.matches) {
     if (initialGamma === undefined || initialBeta === undefined) {
       initialGamma = event.gamma;
       initialBeta = event.beta;
-      return;
+      gyroActive = true;
     }
 
     setTarget(
-      (event.gamma - initialGamma) / 12,
-      (event.beta - initialBeta) / 12
+      (event.gamma - initialGamma) / 20,
+      (event.beta - initialBeta) / 20
     );
   }
 
-  function startOrientation() {
-    if (orientationEnabled) return;
-    window.addEventListener("deviceorientation", handleOrientation, { passive: true });
-    orientationEnabled = true;
-    if (motionToggle) motionToggle.hidden = true;
-    if (motionStatus) motionStatus.textContent = "Telefon hareketi etkin. Telefonu eğerek deneyin.";
-  }
+  document.addEventListener("pointermove", (event) => {
+    if (gyroActive) return;
+    setTarget(
+      (event.clientX / window.innerWidth - 0.5) * 2,
+      (event.clientY / window.innerHeight - 0.5) * 2
+    );
+  }, { passive: true });
+  document.addEventListener("pointerleave", () => {
+    if (!gyroActive) setTarget(0, 0);
+  }, { passive: true });
 
   if (hasCoarsePointer && supportsOrientation) {
+    window.addEventListener("deviceorientation", handleOrientation, { passive: true });
+
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      motionToggle.hidden = false;
-      motionToggle.addEventListener("click", () => {
+      document.addEventListener("pointerdown", () => {
+        if (permissionRequested) return;
+        permissionRequested = true;
         DeviceOrientationEvent.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            startOrientation();
-          } else {
-            motionStatus.textContent = "Hareket izni verilmedi.";
+          if (permission !== "granted") {
+            console.info("Device orientation permission was not granted; using pointer parallax.");
           }
         }).catch((error) => {
-          motionStatus.textContent = "Hareket sensörü açılamadı. Sayfanın HTTPS üzerinden açıldığını kontrol edin.";
-          console.warn("Device orientation permission was not granted:", error);
+          console.warn("Device orientation permission was not granted; using pointer parallax.", error);
         });
-      });
-    } else {
-      startOrientation();
+      }, { once: true, passive: true });
     }
-  } else if (!hasCoarsePointer &&
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    document.addEventListener("pointermove", (event) => {
-      setTarget(
-        (event.clientX / window.innerWidth - 0.5) * 2,
-        (event.clientY / window.innerHeight - 0.5) * 2
-      );
-    }, { passive: true });
-    document.addEventListener("pointerleave", () => setTarget(0, 0), { passive: true });
   }
 }
 

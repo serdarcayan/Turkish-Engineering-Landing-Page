@@ -157,32 +157,9 @@ h2 {
 }
 
 .cta:focus-visible,
-footer a:focus-visible,
-.motion-toggle:focus-visible {
+footer a:focus-visible {
   outline: 2px solid #93c5fd;
   outline-offset: 4px;
-}
-
-.motion-toggle {
-  display: block;
-  margin: 1rem auto 0;
-  padding: 0.55rem 0.8rem;
-  border: 0;
-  background: transparent;
-  color: #93c5fd;
-  font: inherit;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-.motion-toggle[hidden] {
-  display: none;
-}
-
-.motion-status {
-  margin-top: 0.5rem;
-  color: #93c5fd;
-  font: 0.75rem Arial, sans-serif;
 }
 
 @keyframes glow {
