@@ -1,0 +1,217 @@
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100vh;
+        background: radial-gradient(ellipse at center, #040b12 0%, #000 100%);
+        overflow: hidden;
+        perspective: 800px;
+        font-family: "Orbitron", sans-serif;
+        color: #00e0ff;
+        overflow: hidden;
+      }
+
+      .background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        background-blend-mode: screen;
+        will-change: transform;
+      }
+
+      .front,
+      .mid,
+      .back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        will-change: transform;
+      }
+
+      .front {
+        width: 80vmin;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(0, 255, 255, 0.15),
+          transparent
+        );
+      }
+
+      .mid {
+        width: 60vmin;
+        background: radial-gradient(
+          circle at 70% 60%,
+          rgba(0, 150, 255, 0.08),
+          transparent
+        );
+      }
+
+      .back {
+        width: 40vmin;
+        background: linear-gradient(120deg, #00111f 0%, #000002 100%);
+      }
+
+      main {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        top: 45%;
+        transform: translateY(-50%);
+      }
+
+      .logoContainer {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .logo {
+        position: absolute;
+        top: 15%;
+        right: 15%;
+        width: 60vmin;
+        opacity: 0.05;
+        filter: drop-shadow(0 0 5px #00e0ff80) drop-shadow(0 0 10px #00e0ff40) ;
+      }
+
+      h1 {
+        font-size: 3rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #ffffffa0;
+        text-shadow: 0 0 10px #00e1ff80, 0 0 30px #00e1ff31;
+        animation: glow 3s ease-in-out infinite alternate;
+      }
+
+      h2 {
+        transform: translateZ(100px);
+        font-size: 2rem;
+        letter-spacing: 1px;
+        text-transform: capitalize;
+        color: #ffffff6d;
+        text-shadow: 0 0 5px rgba(0, 224, 255, 0.15),
+          0 0 10px rgba(0, 224, 255, 0.08);
+        /* iki eşzamanlı animasyon: hafif sürekli titreşim + düzensiz parlama */
+        animation: ambient 3s linear infinite, irregularBlink 5s linear infinite;
+      }
+
+      /* mevcut başlığın hafif dalgalanması */
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 8px #00e0ff55, 0 0 15px #00e0ff;
+        }
+        to {
+          text-shadow: 0 0 20px #00ffff, 0 0 40px #00e0ffaa;
+        }
+      }
+
+      /* hafif, sürekli mikro titreşim — ortam aydınlığını değiştirir */
+      @keyframes ambient {
+        0% {
+          text-shadow: 0 0 4px rgba(0, 224, 255, 0.18),
+            0 0 9px rgba(0, 224, 255, 0.1);
+          color: #ffffff48;
+        }
+        50% {
+          text-shadow: 0 0 6px rgba(0, 224, 255, 0.22),
+            0 0 12px rgba(0, 224, 255, 0.14);
+          color: #ffffff4f;
+        }
+        100% {
+          text-shadow: 0 0 4px rgba(0, 224, 255, 0.18),
+            0 0 9px rgba(0, 224, 255, 0.1);
+          color: #ffffff48;
+        }
+      }
+
+      /* düzensiz, aralıklı parlama — farklı zaman noktalarında rastgele gibi görünen patlamalar */
+      @keyframes irregularBlink {
+        0% {
+          text-shadow: 0 0 5px rgba(0, 224, 255, 0.15),
+            0 0 10px rgba(0, 224, 255, 0.08);
+        }
+        2% {
+          text-shadow: 0 0 18px rgba(0, 224, 255, 0.95),
+            0 0 36px rgba(0, 224, 255, 0.55);
+        }
+        6% {
+          text-shadow: 0 0 6px rgba(0, 224, 255, 0.25),
+            0 0 14px rgba(0, 224, 255, 0.12);
+        }
+        12% {
+          text-shadow: 0 0 20px rgba(0, 255, 255, 0.95),
+            0 0 40px rgba(0, 224, 255, 0.6);
+        }
+        15% {
+          text-shadow: 0 0 6px rgba(0, 224, 255, 0.2),
+            0 0 12px rgba(0, 224, 255, 0.1);
+        }
+        23% {
+          text-shadow: 0 0 14px rgba(0, 224, 255, 0.7),
+            0 0 28px rgba(0, 224, 255, 0.4);
+        }
+        30% {
+          text-shadow: 0 0 5px rgba(0, 224, 255, 0.14),
+            0 0 10px rgba(0, 224, 255, 0.07);
+        }
+        46% {
+          text-shadow: 0 0 16px rgba(0, 224, 255, 0.8),
+            0 0 32px rgba(0, 224, 255, 0.5);
+        }
+        50% {
+          text-shadow: 0 0 6px rgba(0, 224, 255, 0.2),
+            0 0 12px rgba(0, 224, 255, 0.1);
+        }
+        68% {
+          text-shadow: 0 0 22px rgba(0, 255, 255, 1),
+            0 0 44px rgba(0, 224, 255, 0.65);
+        }
+        70% {
+          text-shadow: 0 0 7px rgba(0, 224, 255, 0.25),
+            0 0 14px rgba(0, 224, 255, 0.12);
+        }
+        85% {
+          text-shadow: 0 0 12px rgba(0, 224, 255, 0.6),
+            0 0 24px rgba(0, 224, 255, 0.35);
+        }
+        93% {
+          text-shadow: 0 0 20px rgba(0, 255, 255, 0.9),
+            0 0 38px rgba(0, 224, 255, 0.5);
+        }
+        100% {
+          text-shadow: 0 0 5px rgba(0, 224, 255, 0.15),
+            0 0 10px rgba(0, 224, 255, 0.08);
+        }
+      }
+
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0.35;
+        filter: blur(3px);
+      }
+
+      footer {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        z-index: 10;
+      }
+      p {
+        font-size: 0.8rem;
+        color: #00e0ff80;
+      }
